@@ -1,0 +1,22 @@
+[
+  {
+    "usersDetails": [
+      {
+        "UserName": "Neeraj",
+        "UserAge": 22
+      },
+      {
+        "UserName": "Ravi",
+        "UserAge": 23
+      },
+      {
+        "UserName": "Pranith",
+        "UserAge": 22
+      },
+      {
+        "UserName": "Chandravamshi",
+        "UserAge": 21
+      }
+    ]
+  }
+]
