@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+        .user-paragraph {
+            background-color: #f9f9ff;
+            color: #333;
+            font-family: "Segoe UI", sans-serif;
+            font-size: 16px;
+            padding: 12px 16px;
+            margin: 10px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #4f46e5; /* subtle accent */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .user-paragraph:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+    </style>
+    <button onclick="checkUser()">getToken&Signin</button>
+    <button onclick="getData()">Get Users</button>
+    <div id = "content"></div>
+
+    <script>
+      let token = "";
+
+      async function checkUser() {
+        try {
+          let response = await fetch("http://localhost:3000/signin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: "harkirat@gmail.com",
+              password: "123"
+            })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            token = data.token;
+            document.getElementById("content").innerText = "Token: " + token;
+          } else {
+            document.getElementById("content").innerText = data.msg || "Login failed";
+          }
+        } catch (e) {
+          console.error("Login error:", e);
+          document.getElementById("content").innerText = "Login error!";
+        }
+      }
+      async function getData() {
+        try {
+          if (!token) {
+            document.getElementById("content").innerText = "Please sign in first!";
+            return;
+          }
+
+          const response = await fetch("http://localhost:3000/users", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": token
+            }
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            const content = document.getElementById("content");
+            content.innerHTML = ""; // Clear previous content
+            data.users.forEach((user) => {
+            const p = document.createElement("p");
+            p.className = "user-paragraph";
+            content.appendChild(p);
+            p.innerText = user.name;
+            content.appendChild(p); // ✅ Append to the DOM
+  });
+          } else {
+            document.getElementById("content").innerText = "Invalid token or user not found.";
+          }
+
+        } catch (error) {
+          console.error("Fetch error:", error);
+          document.getElementById("content").innerText = "Error fetching data";
+        }
+      }
+    </script>
+  </body>
+</html>
