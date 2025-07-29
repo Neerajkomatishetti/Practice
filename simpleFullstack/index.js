@@ -7,7 +7,11 @@ require("dotenv").config();
 const jwtPassword = "123456";
 const app = express();
 
-app.use(cors()); // Important to allow frontend access
+app.use(cors({
+  origin: "http://127.0.0.1:5500", // or whatever your frontend address is
+  methods: ["POST", "GET"]
+}));
+ // Important to allow frontend access
 app.use(express.json());
 
 // const ALL_USERS = [
@@ -37,14 +41,14 @@ const Users = mongoose.model('Users', {
 });
 
 app.post("/signup", async (req, res) => {
-  const username = req.body.username;
-  const email = req.body.email;
-  const password = req.body.password;
+  const { email, username, password} = req.body;
 
   const existingUSer = await Users.findOne({email: email});
 
   if (existingUSer){
-    return res.status(400).send("User already exists!");
+    return res.status(400).json({
+      message:"User already exists!"
+  });
   }
 
   const user = new Users({
@@ -54,7 +58,7 @@ app.post("/signup", async (req, res) => {
   })
 
   user.save();
-  res.json({
+  res.status(200).json({
     message: "User added successfully!"
   })
 

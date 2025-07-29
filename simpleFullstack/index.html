@@ -25,19 +25,55 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
     </style>
-    <button onclick="checkUser()">getToken&Signin</button>
-    <button onclick="getData()">Get Users</button>
+    <div style = "display:flex;flex-direction: column; justify-content: center;">
+    <input id = "email" type = "email" placeholder ="email"/>
+    <input id = "username" type = "text" placeholder = "username"/>
+    <input id = "password" type ="password" placeholder = "password"/>
+    </div>
+    <button onclick="signup()">SignUp</button>
+    <button onclick="signin()">SignIn</button>
+    <button onclick="printUsers()">Get Users</button>
     <div id = "content"></div>
 
     <script>
-      let token = "";
+      // let token = "";
+
+      async function signup() {
+        try{        
+          const username = document.getElementById('username').value;
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          const response = await fetch("http://localhost:3000/signup", {
+            method:"POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              email:email,
+              username: username,
+              password: password,
+            })
+          })
+          const data = await response.json();
+
+          if (response.ok) {
+            document.getElementById("content").innerText = data.message;
+          } else {
+            document.getElementById("content").innerText = data.message || "Login failed";
+          }
+        }catch (e) {
+          console.error("Login error:", e);
+          document.getElementById("content").innerText = "Login error!";
+        }
+      }
 
       async function signin() {
         try {
           let response = await fetch("http://localhost:3000/signin", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json"
             },
             body: JSON.stringify({
               username: "harkirat@gmail.com",
@@ -58,7 +94,7 @@
           document.getElementById("content").innerText = "Login error!";
         }
       }
-      async function getData() {
+      async function printUsers() {
         try {
           if (!token) {
             document.getElementById("content").innerText = "Please sign in first!";
